@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <UsingTask TaskName="ZipDirectory" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <InputPath ParameterType="System.String" Required="true" />
+      <OutputFileName ParameterType="System.String" Required="true" />
+      <OverwriteExistingFile ParameterType="System.Boolean" Required="false" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include=" System.IO.Compression.FileSystem" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.IO.Compression" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[        
+          if(this.OverwriteExistingFile) {
+            File.Delete(this.OutputFileName);
+          }
+          ZipFile.CreateFromDirectory(this.InputPath, this.OutputFileName);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <UsingTask TaskName="GetVersion"
+         TaskFactory="CodeTaskFactory"
+         AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+
+    <ParameterGroup>
+      <AssemblyPath ParameterType="System.String" Required="true" />
+      <Version ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.Diagnostics" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+              Log.LogMessage("Getting version details of assembly at: " + this.AssemblyPath, MessageImportance.High);
+
+              this.Version = FileVersionInfo.GetVersionInfo(this.AssemblyPath).FileVersion;
+              ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <PropertyGroup>
+    <SolutionDir Condition="$(SolutionDir) == ''">$(MSBuildProjectDirectory)\..\</SolutionDir>
+    <NuGetExe>$(SolutionDir).nuget\NuGet.exe</NuGetExe>
+    <TmpOutDir>$(SolutionDir)tmp</TmpOutDir>
+    <NuspecFile>$(SolutionDir)Gosso.EpiserverLegacy.Personalization.Subscription.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <Target Name="CreateNugetPackage" AfterTargets="Build">
+    <PropertyGroup>
+      <Version></Version>
+    </PropertyGroup>
+
+    <GetVersion AssemblyPath="$(SolutionDir)\bin\$(Configuration)\Gosso.EpiserverLegacy.Personalization.Subscription.dll">
+      <Output TaskParameter="Version" PropertyName="Version" />
+    </GetVersion>
+
+    <!-- Create the Versioned out dir for the client resources-->
+    <!--<MakeDir Directories="$(TmpOutDir)\content\$(Version)" />-->
+
+    <!--<Copy SourceFiles="$(SolutionDir)\msbuild\readme.txt" DestinationFolder="$(TmpOutDir)\content\" />-->
+
+    <!-- Create the package -->
+    <PropertyGroup>
+      <NugetCommand>
+        "$(NuGetExe)" pack "$(NuspecFile)" -OutputDirectory "$(OutDir.TrimEnd('\\'))" -Version "$(Version)" -Properties Configuration=$(Configuration)
+      </NugetCommand>
+
+    </PropertyGroup>
+    <Exec Command="$(NugetCommand)"/>
+
+    <!-- Cleanup-->
+    <RemoveDir Directories="$(TmpOutDir)" /> 
+
+  </Target>
+
+</Project>

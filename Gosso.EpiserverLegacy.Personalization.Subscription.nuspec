@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Gosso.EpiserverLegacy.Personalization.Subscription</id>
+    <version>$version$</version>
+    <title>Replacement code for legacy Episerver.Personalization.Subscription-system</title>
+    <authors>Luc Gosso</authors>
+    <owners>Gosso Systems AB</owners>
+    <iconUrl>http://devblog.gosso.se/wp-content/uploads/2016/09/o.png</iconUrl>
+    <projectUrl>https://github.com/LucGosso/Gosso.EpiserverLegacy.Personalization.Subscription</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Project to replace legacy Episerver.Personalization.Subscription* objects</description>
+    <releaseNotes>More information https://github.com/LucGosso/Gosso.EpiserverLegacy.Personalization.Subscription </releaseNotes>
+    <copyright>Free</copyright>
+    <tags>EPiServerModulePackage EPiServer-UI ThirdPartyAddon Gosso Subscription email</tags>
+    <dependencies>
+      <dependency id="EPiServer.CMS.Core" version="[10.9,11.0)" />
+      <dependency id="EPiServer.Framework" version="[10.9,11.0)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\$configuration$\Gosso.EpiserverLegacy.Personalization.Subscription.dll" target="lib\net45\" />
+    <file src="msbuild\readme.txt" target="" />
+  </files>
+</package>
